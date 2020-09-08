@@ -10,7 +10,11 @@ class ElementWrapper  {
     if (name.match(/^on([\s\S]+)$/)) {
       this.root.addEventListener(RegExp.$1.replace(/^[\s\S]/, c => c.toLowerCase()), value);
     } else {
-      this.root.setAttribute(name, value);
+      if (name === 'className') {
+        this.root.setAttribute('class', value);
+      } else {
+        this.root.setAttribute(name, value);
+      }
     }
 
   }
@@ -84,6 +88,7 @@ export class Component {
 
   [RENDER_TO_DOM](range) {
     this._range = range;
+    console.log('render to dom', this.render())
     this.render()[RENDER_TO_DOM](range);
   }
 }
@@ -107,7 +112,11 @@ export function createElement(type, attributes, ...children) {
       if (typeof child === 'string') {
         child = new TextWrapper(child);
       }
-  
+      
+      if (child === null) {
+        continue;
+      }
+
       if (typeof child === 'object' && child instanceof Array) {
         insertChild(child);
       } else {
